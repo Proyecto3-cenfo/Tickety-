@@ -33,9 +33,9 @@ spring:
       enabled: false
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:mysql://localhost:3306/Tickety?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true
-    username: root
-    password:
+    url: jdbc:mysql://proyectodb.cqh9av4udwfh.us-east-1.rds.amazonaws.com:3306/proyectoDB?useSSL=false&allowPublicKeyRetrieval=true
+    username: admincenfodev
+    password: passwordcenfodev1
     hikari:
       poolName: Hikari
       auto-commit: false
