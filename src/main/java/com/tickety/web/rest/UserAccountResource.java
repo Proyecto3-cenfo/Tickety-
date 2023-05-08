@@ -1,16 +1,20 @@
 package com.tickety.web.rest;
 
+import com.tickety.domain.Event;
+import com.tickety.domain.Ticket;
 import com.tickety.domain.User;
 import com.tickety.domain.UserAccount;
+import com.tickety.repository.EventRepository;
+import com.tickety.repository.TicketRepository;
 import com.tickety.repository.UserAccountRepository;
 import com.tickety.repository.UserRepository;
 import com.tickety.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,10 +41,19 @@ public class UserAccountResource {
 
     private final UserAccountRepository userAccountRepository;
     private final UserRepository userRepository;
+    private final EventRepository eventRepository;
+    private final TicketRepository ticketRepository;
 
-    public UserAccountResource(UserAccountRepository userAccountRepository, UserRepository userRepository) {
+    public UserAccountResource(
+        UserAccountRepository userAccountRepository,
+        UserRepository userRepository,
+        EventRepository eventRepository,
+        TicketRepository ticketRepository
+    ) {
         this.userAccountRepository = userAccountRepository;
         this.userRepository = userRepository;
+        this.eventRepository = eventRepository;
+        this.ticketRepository = ticketRepository;
     }
 
     /**
@@ -172,6 +185,25 @@ public class UserAccountResource {
      * @param id the id of the userAccount to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the userAccount, or with status {@code 404 (Not Found)}.
      */
+
+    /**
+
+     */
+    @GetMapping("/user-accounts/Event/{id}")
+    public List<UserAccount> getAllUserAccountsByEvent(@PathVariable Event id) {
+        log.debug("REST request to get all UserAccount in event : {}", id);
+        List<UserAccount> UserAccountList = new ArrayList<>();
+        List<Ticket> ticketList = ticketRepository.findByEvent(id);
+
+        for (Ticket t : ticketList) {
+            if (!UserAccountList.contains(t.getUserAccount())) {
+                UserAccountList.add(t.getUserAccount());
+            }
+        }
+
+        return UserAccountList;
+    }
+
     @GetMapping("/user-accounts/{id}")
     public ResponseEntity<UserAccount> getUserAccount(@PathVariable Long id) {
         log.debug("REST request to get UserAccount : {}", id);

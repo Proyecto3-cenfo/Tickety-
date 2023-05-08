@@ -1,10 +1,17 @@
 package com.tickety.web.rest;
 
 import com.tickety.domain.Event;
+import com.tickety.domain.Ticket;
+import com.tickety.domain.User;
+import com.tickety.domain.UserAccount;
 import com.tickety.repository.EventRepository;
+import com.tickety.repository.UserAccountRepository;
+import com.tickety.repository.UserRepository;
+import com.tickety.security.SecurityUtils;
 import com.tickety.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -35,9 +42,13 @@ public class EventResource {
     private String applicationName;
 
     private final EventRepository eventRepository;
+    private final UserRepository userRepository;
+    private final UserAccountRepository userAccountRepository;
 
-    public EventResource(EventRepository eventRepository) {
+    public EventResource(EventRepository eventRepository, UserRepository userRepository, UserAccountRepository userAccountRepository) {
         this.eventRepository = eventRepository;
+        this.userRepository = userRepository;
+        this.userAccountRepository = userAccountRepository;
     }
 
     /**
@@ -164,6 +175,30 @@ public class EventResource {
         return eventRepository.findAll();
     }
 
+    @GetMapping("/myevents")
+    public List<Event> getAllMyEvents() {
+        log.debug("REST request to get all My Events");
+
+        Optional<String> login = SecurityUtils.getCurrentUserLogin();
+        User user = userRepository.findOneByLogin(login.get()).get();
+        UserAccount currentUserAccount = userAccountRepository.findByUser(user).get();
+
+        List<Event> allEvents = eventRepository.findAll();
+        List<Event> myEvents = new ArrayList<>();
+
+        log.debug("Current user" + user.toString());
+        log.debug("Current UserAccount" + currentUserAccount.toString());
+
+        for (Event e : allEvents) {
+            log.debug("User on event" + e.getUserAccount().getUser().toString());
+            if (e.getUserAccount().getOrganization().equals(currentUserAccount.getOrganization())) {
+                myEvents.add(e);
+            }
+        }
+
+        return myEvents;
+    }
+
     /**
      * {@code GET  /events/:id} : get the "id" event.
      *
@@ -183,6 +218,7 @@ public class EventResource {
      * @param id the id of the event to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
+
     @DeleteMapping("/events/{id}")
     public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
         log.debug("REST request to delete Event : {}", id);
