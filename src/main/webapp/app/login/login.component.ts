@@ -8,6 +8,7 @@ import { AccountService } from 'app/core/auth/account.service';
 @Component({
   selector: 'jhi-login',
   templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent implements OnInit, AfterViewInit {
   @ViewChild('username', { static: false })
@@ -38,11 +39,14 @@ export class LoginComponent implements OnInit, AfterViewInit {
 
   login(): void {
     this.loginService.login(this.loginForm.getRawValue()).subscribe({
-      next: () => {
+      next: account => {
         this.authenticationError = false;
         if (!this.router.getCurrentNavigation()) {
-          // There were no routing during login (eg from navigationToStoredUrl)
-          this.router.navigate(['']);
+          if (this.accountService.hasAnyAuthority('ROLE_ADMIN')) {
+            this.router.navigate(['/admin/dashboard']);
+          } else {
+            this.router.navigate([`user-account/${account?.userAccount?.id}/edit`]);
+          }
         }
       },
       error: () => (this.authenticationError = true),

@@ -43,11 +43,31 @@ public class CacheConfiguration {
     @Bean
     public JCacheManagerCustomizer cacheManagerCustomizer() {
         return cm -> {
-            createCache(cm, com.tickety.repository.UserRepository.USERS_BY_LOGIN_CACHE);
-            createCache(cm, com.tickety.repository.UserRepository.USERS_BY_EMAIL_CACHE);
-            createCache(cm, com.tickety.domain.User.class.getName());
-            createCache(cm, com.tickety.domain.Authority.class.getName());
-            createCache(cm, com.tickety.domain.User.class.getName() + ".authorities");
+            //createCache(cm, com.tickety.repository.UserRepository.USERS_BY_LOGIN_CACHE);
+            //createCache(cm, com.tickety.repository.UserRepository.USERS_BY_EMAIL_CACHE);
+            //createCache(cm, com.tickety.domain.User.class.getName());
+            //createCache(cm, com.tickety.domain.Authority.class.getName());
+            //createCache(cm, com.tickety.domain.User.class.getName() + ".authorities");
+            //createCache(cm, com.tickety.domain.UserAccount.class.getName());
+            //createCache(cm, com.tickety.domain.UserAccount.class.getName() + ".events");
+            //createCache(cm, com.tickety.domain.UserAccount.class.getName() + ".roles");
+            createCache(cm, com.tickety.domain.Roles.class.getName());
+            createCache(cm, com.tickety.domain.Contact.class.getName());
+            createCache(cm, com.tickety.domain.Photo.class.getName());
+            createCache(cm, com.tickety.domain.Galery.class.getName());
+            createCache(cm, com.tickety.domain.Galery.class.getName() + ".photos");
+            createCache(cm, com.tickety.domain.Organization.class.getName());
+            createCache(cm, com.tickety.domain.Organization.class.getName() + ".userAccounts");
+            createCache(cm, com.tickety.domain.Organization.class.getName() + ".events");
+            createCache(cm, com.tickety.domain.Venue.class.getName());
+            createCache(cm, com.tickety.domain.Venue.class.getName() + ".events");
+            createCache(cm, com.tickety.domain.Genre.class.getName());
+            createCache(cm, com.tickety.domain.Artist.class.getName());
+            createCache(cm, com.tickety.domain.Artist.class.getName() + ".genres");
+            createCache(cm, com.tickety.domain.Event.class.getName());
+            createCache(cm, com.tickety.domain.Event.class.getName() + ".artists");
+            createCache(cm, com.tickety.domain.Event.class.getName() + ".tickets");
+            createCache(cm, com.tickety.domain.Ticket.class.getName());
             // jhipster-needle-ehcache-add-entry
         };
     }

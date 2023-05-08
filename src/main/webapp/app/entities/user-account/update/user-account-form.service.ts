@@ -18,12 +18,9 @@ type UserAccountFormDefaults = Pick<NewUserAccount, 'id'>;
 
 type UserAccountFormGroupContent = {
   id: FormControl<IUserAccount['id'] | NewUserAccount['id']>;
-  email: FormControl<IUserAccount['email']>;
-  password: FormControl<IUserAccount['password']>;
-  name: FormControl<IUserAccount['name']>;
-  lastName: FormControl<IUserAccount['lastName']>;
   genderu: FormControl<IUserAccount['genderu']>;
   organization: FormControl<IUserAccount['organization']>;
+  user: FormControl<IUserAccount['user']>;
 };
 
 export type UserAccountFormGroup = FormGroup<UserAccountFormGroupContent>;
@@ -35,6 +32,7 @@ export class UserAccountFormService {
       ...this.getFormDefaults(),
       ...userAccount,
     };
+
     return new FormGroup<UserAccountFormGroupContent>({
       id: new FormControl(
         { value: userAccountRawValue.id, disabled: true },
@@ -43,12 +41,27 @@ export class UserAccountFormService {
           validators: [Validators.required],
         }
       ),
-      email: new FormControl(userAccountRawValue.email),
-      password: new FormControl(userAccountRawValue.password),
-      name: new FormControl(userAccountRawValue.name),
-      lastName: new FormControl(userAccountRawValue.lastName),
       genderu: new FormControl(userAccountRawValue.genderu),
       organization: new FormControl(userAccountRawValue.organization),
+      // @ts-ignore
+      user: new FormGroup({
+        firstName: new FormControl(userAccountRawValue.user?.firstName, {
+          validators: [
+            Validators.required,
+            Validators.minLength(1),
+            Validators.maxLength(50),
+            Validators.pattern('^[a-zA-Z0-9!$&*+=?^_`{|}~.-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$|^[_.@A-Za-z0-9-]+$'),
+          ],
+        }),
+        lastName: new FormControl(userAccountRawValue.user?.lastName, {
+          validators: [
+            Validators.required,
+            Validators.minLength(1),
+            Validators.maxLength(50),
+            Validators.pattern('^[a-zA-Z0-9!$&*+=?^_`{|}~.-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$|^[_.@A-Za-z0-9-]+$'),
+          ],
+        }),
+      }),
     });
   }
 

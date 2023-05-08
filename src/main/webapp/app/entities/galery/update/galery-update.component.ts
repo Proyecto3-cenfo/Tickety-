@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
@@ -8,19 +8,23 @@ import { GaleryFormService, GaleryFormGroup } from './galery-form.service';
 import { IGalery } from '../galery.model';
 import { GaleryService } from '../service/galery.service';
 import { GaleryStatus } from 'app/entities/enumerations/galery-status.model';
+import { EventSatus } from '../../enumerations/event-satus.model';
 
 @Component({
   selector: 'jhi-galery-update',
   templateUrl: './galery-update.component.html',
+  styleUrls: ['./galery-update.component.scss'],
 })
 export class GaleryUpdateComponent implements OnInit {
+  static i: number = 1;
   isSaving = false;
   galery: IGalery | null = null;
   galeryStatusValues = Object.keys(GaleryStatus);
-
+  galeryStatusCurrent = GaleryStatus;
   editForm: GaleryFormGroup = this.galeryFormService.createGaleryFormGroup();
 
   constructor(
+    protected router: Router,
     protected galeryService: GaleryService,
     protected galeryFormService: GaleryFormService,
     protected activatedRoute: ActivatedRoute
@@ -33,6 +37,7 @@ export class GaleryUpdateComponent implements OnInit {
         this.updateForm(galery);
       }
     });
+    this.save();
   }
 
   previousState(): void {
@@ -45,8 +50,11 @@ export class GaleryUpdateComponent implements OnInit {
     if (galery.id !== null) {
       this.subscribeToSaveResponse(this.galeryService.update(galery));
     } else {
+      galery.name = 'Galería' + ' ' + GaleryUpdateComponent.i++;
+      galery.status = this.galeryStatusCurrent.ACTIVE;
       this.subscribeToSaveResponse(this.galeryService.create(galery));
     }
+    this.router.navigate([`photo/new`]);
   }
 
   protected subscribeToSaveResponse(result: Observable<HttpResponse<IGalery>>): void {
@@ -56,16 +64,15 @@ export class GaleryUpdateComponent implements OnInit {
     });
   }
 
-  protected onSaveSuccess(): void {
-    this.previousState();
-  }
+  protected onSaveSuccess(): void {}
 
   protected onSaveError(): void {
     // Api for inheritance.
   }
 
-  protected onSaveFinalize(): void {
+  protected onSaveFinalize(): boolean {
     this.isSaving = false;
+    return this.isSaving;
   }
 
   protected updateForm(galery: IGalery): void {

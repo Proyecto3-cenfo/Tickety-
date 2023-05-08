@@ -8,5 +8,14 @@ eg $input-color: red;
 @import 'bootstrap-variables';
 // Import Bootstrap source files from node_modules
 @import '~bootstrap/scss/bootstrap';
-
+@import '~@angular/material/prebuilt-themes/indigo-pink.css';
 /* jhipster-needle-scss-add-vendor JHipster will add new css style */
+
+.tickety-table {
+  width: 90%;
+  margin: auto;
+}
+
+.navbar-bg-color {
+  background-color: #152238;
+}

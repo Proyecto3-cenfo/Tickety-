@@ -1,83 +1,211 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
-    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-      <h2
-        id="jhi-user-account-heading"
-        data-cy="UserAccountCreateUpdateHeading"
-        jhiTranslate="ticketyApp.userAccount.home.createOrEditLabel"
-      >
-        Crear o editar User Account
-      </h2>
+<div class="container-fluid bg-dark">
+  <div class="row flex-nowrap">
+    <!-- DISPLAY NAVBAR BASED ON USER AUTHORITY -->
+    <div
+      class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark"
+      style="border: 1px solid gray !important; width: 280px; height: 80vh"
+    >
+      <hr />
+      <ul *ngIf="userHasOnlyUserRole()" class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item">
+          <a (click)="changeViewMode(VIEWMODE_PREFERENCES)" class="nav-link text-light" aria-current="page">
+            <svg class="bi me-2" width="16" height="16"><use xlink:href="#home"></use></svg>
+            Perfil de {{ userType }}
+          </a>
+        </li>
 
-      <div>
-        <jhi-alert-error></jhi-alert-error>
+        <li>
+          <a class="nav-link text-light">
+            <svg class="bi me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
+            Mis tickets
+          </a>
+        </li>
+        <li>
+          <a routerLink="/organization/new" class="nav-link text-light">
+            <svg class="bi me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
+            Crear organización
+          </a>
+        </li>
 
-        <div class="row mb-3" *ngIf="editForm.controls.id.value !== null">
-          <label class="form-label" jhiTranslate="global.field.id" for="field_id">ID</label>
-          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
-        </div>
+        <hr />
 
-        <div class="row mb-3">
-          <label class="form-label" jhiTranslate="ticketyApp.userAccount.email" for="field_email">Email</label>
-          <input type="text" class="form-control" name="email" id="field_email" data-cy="email" formControlName="email" />
-        </div>
+        <li>
+          <a routerLink="/account/password" class="nav-link text-light">
+            <svg class="bi me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
+            Cambiar contraseña
+          </a>
+        </li>
 
-        <div class="row mb-3">
-          <label class="form-label" jhiTranslate="ticketyApp.userAccount.password" for="field_password">Password</label>
-          <input type="text" class="form-control" name="password" id="field_password" data-cy="password" formControlName="password" />
-        </div>
+        <li>
+          <a (click)="logout()" class="nav-link text-light">
+            <svg class="bi me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
+            Cerrar sesión
+          </a>
+        </li>
+      </ul>
 
-        <div class="row mb-3">
-          <label class="form-label" jhiTranslate="ticketyApp.userAccount.name" for="field_name">Name</label>
-          <input type="text" class="form-control" name="name" id="field_name" data-cy="name" formControlName="name" />
-        </div>
+      <ul *ngIf="userHasOrganizationOrPromoterRole()" class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item">
+          <a class="nav-link text-light" aria-current="page">
+            <svg class="bi me-2" width="16" height="16"><use xlink:href="#home"></use></svg>
+            Perfil de {{ userType }}
+          </a>
+        </li>
 
-        <div class="row mb-3">
-          <label class="form-label" jhiTranslate="ticketyApp.userAccount.lastName" for="field_lastName">Last Name</label>
-          <input type="text" class="form-control" name="lastName" id="field_lastName" data-cy="lastName" formControlName="lastName" />
-        </div>
+        <li>
+          <a class="nav-link text-light" routerLink="/event">
+            <svg class="bi me-2" width="16" height="16"><use xlink:href="#table"></use></svg>
+            Eventos
+          </a>
+        </li>
 
-        <div class="row mb-3">
-          <label class="form-label" jhiTranslate="ticketyApp.userAccount.genderu" for="field_genderu">Genderu</label>
-          <select class="form-control" name="genderu" formControlName="genderu" id="field_genderu" data-cy="genderu">
-            <option [ngValue]="null">{{ 'ticketyApp.Gender.null' | translate }}</option>
-            <option *ngFor="let gender of genderValues" [value]="gender">{{ 'ticketyApp.Gender.' + gender | translate }}</option>
-          </select>
-        </div>
+        <li>
+          <a routerLink="/organization/invite-promoter" class="nav-link text-light">
+            <svg class="bi me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
+            Invitar promotor
+          </a>
+        </li>
 
-        <div class="row mb-3">
-          <label class="form-label" jhiTranslate="ticketyApp.userAccount.organization" for="field_organization">Organization</label>
-          <select
-            class="form-control"
-            id="field_organization"
-            data-cy="organization"
-            name="organization"
-            formControlName="organization"
-            [compareWith]="compareOrganization"
-          >
-            <option [ngValue]="null"></option>
-            <option [ngValue]="organizationOption" *ngFor="let organizationOption of organizationsSharedCollection">
-              {{ organizationOption.id }}
-            </option>
-          </select>
+        <hr />
+
+        <li>
+          <a routerLink="/account/password" class="nav-link text-light">
+            <svg class="bi me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
+            Cambiar contraseña
+          </a>
+        </li>
+
+        <li>
+          <a (click)="logout()" class="nav-link text-light">
+            <svg class="bi me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
+            Cerrar sesión
+          </a>
+        </li>
+      </ul>
+
+      <hr />
+    </div>
+
+    <section class="vh-70 bg-image section" *ngIf="currentViewMode === VIEWMODE_PREFERENCES">
+      <div class="mask d-flex align-items-center gradient-custom-3">
+        <div class="container h-50">
+          <div class="row d-flex align-items-center h-100">
+            <div class="col-12 col-md-9 col-lg-7 col-xl-6">
+              <div class="bg-dark" style="color: white; margin: 5% 0 -30 30%; width: 100%">
+                <div class="card-body p-5">
+                  <h2 class="text-center mb-5">Editar perfil</h2>
+
+                  <jhi-alert-error></jhi-alert-error>
+
+                  <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+                    <div formGroupName="user" class="mb-3">
+                      <label class="form-label" for="nombre">Nombre</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="nombre"
+                        name="nombre"
+                        placeholder="Nombre"
+                        formControlName="firstName"
+                        data-cy="username"
+                        #name
+                      />
+
+                      <div
+                        *ngIf="
+                          editForm.get('user.firstName')!.invalid &&
+                          (editForm.get('user.firstName')!.dirty || editForm.get('user.firstName')!.touched)
+                        "
+                      >
+                        <small class="form-text text-danger" *ngIf="editForm.get('user.firstName')?.errors?.required">
+                          Su nombre es obligatorio.
+                        </small>
+
+                        <small class="form-text text-danger" *ngIf="editForm.get('user.firstName')?.errors?.minlength">
+                          Su nombre debe tener al menos 1 caracter.
+                        </small>
+
+                        <small class="form-text text-danger" *ngIf="editForm.get('user.firstName')?.errors?.maxlength">
+                          Su nombre no puede tener más de 50 caracteres.
+                        </small>
+
+                        <small class="form-text text-danger" *ngIf="editForm.get('user.firstName')?.errors?.pattern">
+                          Su nombre no es válido.
+                        </small>
+                      </div>
+                    </div>
+
+                    <div formGroupName="user" class="mb-3">
+                      <label class="form-label" for="apellido">Apellido</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="apellido"
+                        name="apellido"
+                        placeholder="Apellido"
+                        formControlName="lastName"
+                        data-cy="username"
+                        #name
+                      />
+
+                      <div
+                        *ngIf="
+                          editForm.get('user.lastName')!.invalid &&
+                          (editForm.get('user.lastName')!.dirty || editForm.get('user.lastName')!.touched)
+                        "
+                      >
+                        <small class="form-text text-danger" *ngIf="editForm.get('user.lastName')?.errors?.required">
+                          Su apellido es obligatorio.
+                        </small>
+
+                        <small class="form-text text-danger" *ngIf="editForm.get('user.lastName')?.errors?.minlength">
+                          Su apellido debe tener al menos 1 caracter.
+                        </small>
+
+                        <small class="form-text text-danger" *ngIf="editForm.get('user.lastName')?.errors?.maxlength">
+                          Su apellido no puede tener más de 50 caracteres.
+                        </small>
+
+                        <small class="form-text text-danger" *ngIf="editForm.get('user.lastName')?.errors?.pattern">
+                          Su apellido no es válido.
+                        </small>
+                      </div>
+                    </div>
+
+                    <div class="mb-3">
+                      <label class="form-label" for="field_genderu">Género</label>
+                      <select class="form-control" name="genderu" formControlName="genderu" id="field_genderu" data-cy="genderu">
+                        <option [ngValue]="null">{{ null }}</option>
+                        <option *ngFor="let gender of genderValues" [value]="gender">{{ gender }}</option>
+                      </select>
+                    </div>
+
+                    <button
+                      type="submit"
+                      id="save-entity"
+                      data-cy="entityCreateSaveButton"
+                      [disabled]="editForm.invalid || isSaving"
+                      class="btn btn-primary"
+                    >
+                      <span>Actualizar</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      id="cancel-save"
+                      data-cy="entityCreateCancelButton"
+                      class="btn btn-secondary"
+                      (click)="previousState()"
+                    >
+                      <span>Cancelar</span>
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-
-      <div>
-        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
-          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancelar</span>
-        </button>
-
-        <button
-          type="submit"
-          id="save-entity"
-          data-cy="entityCreateSaveButton"
-          [disabled]="editForm.invalid || isSaving"
-          class="btn btn-primary"
-        >
-          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Guardar</span>
-        </button>
-      </div>
-    </form>
+    </section>
   </div>
 </div>

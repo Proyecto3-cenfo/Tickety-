@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 
@@ -14,17 +14,18 @@ import { PhotoStatus } from 'app/entities/enumerations/photo-status.model';
 @Component({
   selector: 'jhi-photo-update',
   templateUrl: './photo-update.component.html',
+  styleUrls: ['./photo-update.component.scss'],
 })
 export class PhotoUpdateComponent implements OnInit {
   isSaving = false;
   photo: IPhoto | null = null;
   photoStatusValues = Object.keys(PhotoStatus);
-
+  photoStatusCurrent = PhotoStatus;
   galeriesSharedCollection: IGalery[] = [];
-
   editForm: PhotoFormGroup = this.photoFormService.createPhotoFormGroup();
 
   constructor(
+    private router: Router,
     protected photoService: PhotoService,
     protected photoFormService: PhotoFormService,
     protected galeryService: GaleryService,
@@ -54,7 +55,9 @@ export class PhotoUpdateComponent implements OnInit {
     if (photo.id !== null) {
       this.subscribeToSaveResponse(this.photoService.update(photo));
     } else {
+      photo.status = this.photoStatusCurrent.ACTIVE;
       this.subscribeToSaveResponse(this.photoService.create(photo));
+      this.router.navigate([`event`]);
     }
   }
 
@@ -65,16 +68,15 @@ export class PhotoUpdateComponent implements OnInit {
     });
   }
 
-  protected onSaveSuccess(): void {
-    this.previousState();
-  }
+  protected onSaveSuccess(): void {}
 
   protected onSaveError(): void {
     // Api for inheritance.
   }
 
-  protected onSaveFinalize(): void {
+  protected onSaveFinalize(): boolean {
     this.isSaving = false;
+    return this.isSaving;
   }
 
   protected updateForm(photo: IPhoto): void {
