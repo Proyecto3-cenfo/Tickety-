@@ -167,6 +167,17 @@ public class TicketResource {
     }
 
     /**
+     * {@code GET  /tickets/tickets/event/{id}} : get all the tickets by event ID.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of tickets in body.
+     */
+    @GetMapping("/tickets/event/{id}")
+    public List<Ticket> getAllTicketsByEvent(@PathVariable Event id) {
+        log.debug("REST request to get all Tickets");
+        return ticketRepository.findByEvent(id);
+    }
+
+    /**
      * {@code GET  /tickets/:id} : get the "id" ticket.
      *
      * @param id the id of the ticket to retrieve.
