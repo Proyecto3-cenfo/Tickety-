@@ -1,16 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { IEvent } from '../../../entities/event/event.model';
 import { EventUserService } from '../service/event-user.service';
 import { EventService } from '../../../entities/event/service/event.service';
-
 import { MatExpansionModule } from '@angular/material/expansion';
+import { IEvent } from '../../../entities/event/event.model';
 
 @Component({
-  selector: 'jhi-event-user',
-  templateUrl: './event-user.component.html',
-  styleUrls: ['./event-user.component.scss'],
+  selector: 'jhi-ventas',
+  templateUrl: './ventas.component.html',
+  styleUrls: ['./ventas.component.scss'],
 })
-export class EventUserComponent implements OnInit {
+export class VentasComponent implements OnInit {
   events?: IEvent[];
 
   constructor(
@@ -23,17 +22,9 @@ export class EventUserComponent implements OnInit {
     this.eventService.myQuery().subscribe(res => {
       this.events = <IEvent[]>(<unknown>res.body);
       this.events?.forEach(event => {
-        this.eventUserService.findEventUsers(event.id.toString()).subscribe(res => {
-          event.clients = res;
+        this.eventUserService.findTicketsByEvent(event.id.toString()).subscribe(res => {
+          event.ticketsSold = res;
         });
-      });
-    });
-  }
-
-  LoadClients(): void {
-    this.events?.forEach(event => {
-      this.eventUserService.findEventUsers(event.id.toString()).subscribe(res => {
-        event.clients = res;
       });
     });
   }
