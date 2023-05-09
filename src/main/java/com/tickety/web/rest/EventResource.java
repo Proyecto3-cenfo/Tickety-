@@ -186,9 +186,6 @@ public class EventResource {
         List<Event> allEvents = eventRepository.findAll();
         List<Event> myEvents = new ArrayList<>();
 
-        log.debug("Current user" + user.toString());
-        log.debug("Current UserAccount" + currentUserAccount.toString());
-
         for (Event e : allEvents) {
             log.debug("User on event" + e.getUserAccount().getUser().toString());
             if (e.getUserAccount().getOrganization().equals(currentUserAccount.getOrganization())) {

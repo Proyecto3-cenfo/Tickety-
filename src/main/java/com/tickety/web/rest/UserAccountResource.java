@@ -189,7 +189,7 @@ public class UserAccountResource {
     /**
 
      */
-    @GetMapping("/user-accounts/Event/{id}")
+    @GetMapping("/user-accounts/event/{id}")
     public List<UserAccount> getAllUserAccountsByEvent(@PathVariable Event id) {
         log.debug("REST request to get all UserAccount in event : {}", id);
         List<UserAccount> UserAccountList = new ArrayList<>();
