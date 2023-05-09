@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { VentasComponent } from './ventas/ventas.component';
+import { NgChartsModule } from 'ng2-charts';
 
 const routes: Routes = [
   { path: 'event-user/list', component: EventUserComponent },
@@ -12,6 +13,6 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [EventUserComponent, VentasComponent],
-  imports: [CommonModule, RouterModule.forChild(routes), MatExpansionModule],
+  imports: [CommonModule, RouterModule.forChild(routes), MatExpansionModule, NgChartsModule],
 })
 export class EventUserModule {}

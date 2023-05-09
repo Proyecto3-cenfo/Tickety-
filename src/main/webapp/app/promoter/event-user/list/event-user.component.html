@@ -9,6 +9,25 @@
       </mat-panel-description>
     </mat-expansion-panel-header>
 
-    <p *ngFor="let client of event.clients">{{ client.user?.email }}</p>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Nombre</th>
+          <th scope="col">Apellido</th>
+          <th scope="col">Email</th>
+          <th scope="col">Genero</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let client of event.clients; index as indexOfelement">
+          <th scope="row">{{ indexOfelement + 1 }}</th>
+          <td>{{ client.user?.firstName }}</td>
+          <td>{{ client.user?.lastName }}</td>
+          <td>{{ client.user?.email }}</td>
+          <td>{{ client.genderu | lowercase }}</td>
+        </tr>
+      </tbody>
+    </table>
   </mat-expansion-panel>
 </mat-accordion>

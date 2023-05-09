@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { IEvent } from '../../../entities/event/event.model';
 import { EventUserService } from '../service/event-user.service';
 import { EventService } from '../../../entities/event/service/event.service';
-
 import { MatExpansionModule } from '@angular/material/expansion';
 
 @Component({
@@ -30,11 +29,7 @@ export class EventUserComponent implements OnInit {
     });
   }
 
-  LoadClients(): void {
-    this.events?.forEach(event => {
-      this.eventUserService.findEventUsers(event.id.toString()).subscribe(res => {
-        event.clients = res;
-      });
-    });
+  showClients(): void {
+    console.log(this.events);
   }
 }

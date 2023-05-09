@@ -10,6 +10,16 @@ import { IEvent } from '../../../entities/event/event.model';
   styleUrls: ['./ventas.component.scss'],
 })
 export class VentasComponent implements OnInit {
+  lineChartData = {
+    labels: ['Sun', 'Mon', 'Tue', 'Web', 'Thue'],
+    datasets: [
+      {
+        data: [89, 34, 36, 54, 74],
+        label: 'Sales Percent',
+      },
+    ],
+  };
+
   events?: IEvent[];
 
   constructor(
