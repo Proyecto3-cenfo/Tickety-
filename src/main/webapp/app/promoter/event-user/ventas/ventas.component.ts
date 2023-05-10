@@ -10,17 +10,9 @@ import { IEvent } from '../../../entities/event/event.model';
   styleUrls: ['./ventas.component.scss'],
 })
 export class VentasComponent implements OnInit {
-  lineChartData = {
-    labels: ['Sun', 'Mon', 'Tue', 'Web', 'Thue'],
-    datasets: [
-      {
-        data: [89, 34, 36, 54, 74],
-        label: 'Sales Percent',
-      },
-    ],
-  };
-
+  lineChartData: any = [];
   events?: IEvent[];
+  totalEarning: any = [];
 
   constructor(
     protected eventUserService: EventUserService,
@@ -34,8 +26,31 @@ export class VentasComponent implements OnInit {
       this.events?.forEach(event => {
         this.eventUserService.findTicketsByEvent(event.id.toString()).subscribe(res => {
           event.ticketsSold = res;
+          this.lineChartData.push({
+            labels: ['Vendios', 'Disponibles'],
+            datasets: [
+              {
+                data: [event.ticketsSold.length, event.talTickets],
+                label: 'Cantidad de entradas',
+              },
+            ],
+          });
+
+          this.totalEarning.push(
+            event.ticketsSold
+              .map(item => item.amount)
+              .reduce((accumulation, current) => {
+                // @ts-ignore
+                return accumulation + current;
+              })
+          );
         });
       });
     });
+  }
+
+  calTotalEarn(): void {
+    // @ts-ignore
+    console.log(this.events[0]?.ticketsSold);
   }
 }

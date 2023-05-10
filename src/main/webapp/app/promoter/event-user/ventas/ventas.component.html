@@ -1,5 +1,5 @@
 <h1>Reporte de ventas</h1>
-<mat-accordion *ngFor="let event of events">
+<mat-accordion *ngFor="let event of events; let i = index">
   <mat-expansion-panel hideToggle>
     <mat-expansion-panel-header>
       <mat-panel-title>
@@ -9,9 +9,40 @@
         {{ event.eventDescription }}
       </mat-panel-description>
     </mat-expansion-panel-header>
-    <div style="display: block; width: 800px; height: 250px">
-      <canvas baseChart [data]="lineChartData" [type]="'pie'"> </canvas>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-sm">
+          <canvas baseChart [data]="lineChartData[i]" [type]="'pie'"> </canvas>
+        </div>
+        <div class="col-sm"></div>
+        <div class="col-sm">
+          <div>Total: {{ totalEarning[i] }}</div>
+        </div>
+      </div>
     </div>
-    <p *ngFor="let ticket of event.ticketsSold">{{ ticket.id }}</p>
+
+    <table class="table mt-xl-5">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Fecha</th>
+          <th scope="col">Nombre</th>
+          <th scope="col">Apellido</th>
+          <th scope="col">Email</th>
+          <th scope="col">Precio</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let ticket of event.ticketsSold; index as indexOfelement">
+          <th scope="row">{{ indexOfelement + 1 }}</th>
+          <td>{{ ticket.date }}</td>
+          <td>{{ ticket.userAccount?.user?.firstName }}</td>
+          <td>{{ ticket.userAccount?.user?.lastName }}</td>
+          <td>{{ ticket.userAccount?.user?.email }}</td>
+          <td>{{ ticket.amount }}</td>
+        </tr>
+      </tbody>
+    </table>
   </mat-expansion-panel>
 </mat-accordion>

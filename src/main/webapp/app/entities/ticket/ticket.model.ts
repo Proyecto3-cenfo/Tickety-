@@ -10,7 +10,7 @@ export interface ITicket {
   payment?: string | null;
   amount?: number | null;
   seat?: string | null;
-  userAccount?: Pick<IUserAccount, 'id'> | null;
+  userAccount?: IUserAccount | null;
   event?: Pick<IEvent, 'id'> | null;
 }
 
