@@ -26,16 +26,7 @@ export class VentasComponent implements OnInit {
       this.events?.forEach(event => {
         this.eventUserService.findTicketsByEvent(event.id.toString()).subscribe(res => {
           event.ticketsSold = res;
-          this.lineChartData.push({
-            labels: ['Vendios', 'Disponibles'],
-            datasets: [
-              {
-                data: [event.ticketsSold.length, event.talTickets],
-                label: 'Cantidad de entradas',
-              },
-            ],
-          });
-
+          this.createGraph(event);
           this.totalEarning.push(
             event.ticketsSold
               .map(item => item.amount)
@@ -49,8 +40,17 @@ export class VentasComponent implements OnInit {
     });
   }
 
-  calTotalEarn(): void {
-    // @ts-ignore
-    console.log(this.events[0]?.ticketsSold);
+  createGraph(event: IEvent): void {
+    this.lineChartData.push({
+      labels: ['Vendios', 'Disponibles'],
+      datasets: [
+        {
+          data: [event.ticketsSold?.length, event.talTickets],
+          label: 'Cantidad de entradas',
+        },
+      ],
+    });
+
+    console.log(event.ticketsSold?.length);
   }
 }

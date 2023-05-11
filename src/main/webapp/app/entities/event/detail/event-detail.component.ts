@@ -53,8 +53,8 @@ export class EventDetailComponent implements OnInit {
 
   openModal(): void {
     const dialogRef = this.matDialog.open(TicketUpdateComponent, {
-      width: '400px',
-      height: '280px',
+      width: '350px',
+      height: '380px',
       data: {
         event: this.event,
       },
