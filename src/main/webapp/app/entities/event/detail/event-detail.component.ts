@@ -7,7 +7,7 @@ import { IPhoto } from '../../photo/photo.model';
 import { DataService } from '../../../shared/data/data.service';
 import { MatDialog } from '@angular/material/dialog';
 import { AccountService } from '../../../core/auth/account.service';
-
+import { EventService } from '../service/event.service';
 import { TicketUpdateComponent } from '../../ticket/update/ticket-update.component';
 
 @Component({
@@ -19,12 +19,14 @@ export class EventDetailComponent implements OnInit {
   event: IEvent | null = null;
   galery: IGalery | null = null;
   currentPrice: number | null | undefined = null;
+  totalTIckets: any;
 
   constructor(
     protected activatedRoute: ActivatedRoute,
     protected dataService: DataService,
     protected matDialog: MatDialog,
-    protected accountService: AccountService
+    protected accountService: AccountService,
+    protected eventService: EventService
   ) {}
 
   ngOnInit(): void {
@@ -33,6 +35,7 @@ export class EventDetailComponent implements OnInit {
     this.activatedRoute.data.subscribe(({ event }) => {
       this.event = event;
       this.galery = <IGalery>this.event?.galery;
+      this.totalTIckets = this.event?.talTickets;
     });
 
     const myPhotos = <IPhoto[]>(<unknown>this.galery?.photos);
@@ -49,14 +52,19 @@ export class EventDetailComponent implements OnInit {
   }
 
   openModal(): void {
-    console.log(this.event);
-
-    this.matDialog.open(TicketUpdateComponent, {
+    const dialogRef = this.matDialog.open(TicketUpdateComponent, {
       width: '400px',
       height: '280px',
       data: {
         event: this.event,
       },
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      this.eventService.find(this.event?.id).subscribe(event => {
+        this.totalTIckets = event.body?.talTickets;
+      });
+      console.log('The dialog was closed');
     });
   }
 }

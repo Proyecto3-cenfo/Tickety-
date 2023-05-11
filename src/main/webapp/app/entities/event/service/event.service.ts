@@ -51,7 +51,7 @@ export class EventService {
       .pipe(map(res => this.convertResponseFromServer(res)));
   }
 
-  find(id: number): Observable<EntityResponseType> {
+  find(id?: number): Observable<EntityResponseType> {
     return this.http
       .get<RestEvent>(`${this.resourceUrl}/${id}`, { observe: 'response' })
       .pipe(map(res => this.convertResponseFromServer(res)));

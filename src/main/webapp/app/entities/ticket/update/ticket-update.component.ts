@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { finalize, map } from 'rxjs/operators';
@@ -16,7 +16,9 @@ import { Account } from '../../../core/auth/account.model';
 import { DataService } from '../../../shared/data/data.service';
 import { NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+
+declare var paypal: any;
 
 @Component({
   selector: 'jhi-ticket-update',
@@ -37,7 +39,17 @@ export class TicketUpdateComponent implements OnInit {
 
   ticketCount = 0;
   currentPrice: number | null | undefined = null;
-  totalPay: number | null | undefined = null;
+  totalPay?: number;
+
+  @ViewChild('paypal', { static: true }) paypalElement: ElementRef | undefined;
+
+  product = {
+    price: 0.01,
+    description: 'Compra de tickets',
+    img: '../content/images/concert.jpg',
+  };
+
+  paidFor = false;
 
   constructor(
     protected ticketService: TicketService,
@@ -48,10 +60,9 @@ export class TicketUpdateComponent implements OnInit {
     protected accountService: AccountService,
     protected dataService: DataService,
     protected calendar: NgbCalendar,
+    private dialogRef: MatDialogRef<TicketUpdateComponent>,
     @Inject(MAT_DIALOG_DATA) protected data: any
-  ) {
-    console.log(data.event.eventName);
-  }
+  ) {}
 
   compareUserAccount = (o1: IUserAccount | null, o2: IUserAccount | null): boolean => this.userAccountService.compareUserAccount(o1, o2);
 
@@ -73,10 +84,37 @@ export class TicketUpdateComponent implements OnInit {
       }
       this.loadRelationshipsOptions();
     });
+
+    paypal
+      .Buttons({
+        createOrder: (data: any, actions: any) => {
+          return actions.order.create({
+            purchase_units: [
+              {
+                description: this.product.description,
+                amount: {
+                  currency_code: 'USD',
+                  value: this.getTotalDollars(this.totalPay!).toFixed(2),
+                },
+              },
+            ],
+          });
+        },
+        onApprove: async (data: any, actions: any) => {
+          const order = await actions.order.capture();
+          this.paidFor = true;
+          this.save();
+          this.closemodal();
+        },
+        onError: (err: any) => {
+          console.log(err);
+        },
+      })
+      .render(this.paypalElement?.nativeElement);
   }
 
   previousState(): void {
-    //window.history.back();
+    window.history.back();
   }
 
   save(): void {
@@ -107,7 +145,7 @@ export class TicketUpdateComponent implements OnInit {
   }
 
   protected onSaveSuccess(): void {
-    this.previousState();
+    //this.previousState();
   }
 
   protected onSaveError(): void {
@@ -157,5 +195,14 @@ export class TicketUpdateComponent implements OnInit {
       this.ticketCount = this.ticketCount - 1;
       this.totalPay = (this.currentPrice || 0) * this.ticketCount;
     }
+  }
+
+  getTotalDollars(dollars: number): number {
+    const tipoDecambio = 537.49;
+    return dollars! / tipoDecambio;
+  }
+
+  closemodal(): void {
+    this.dialogRef.close();
   }
 }
