@@ -70,7 +70,7 @@ spring:
 # See details in topic "Create a Java Keystore (.JKS) from Let's Encrypt Certificates" on https://maximilian-boehm.com/en-gb/blog
 #
 # Then, modify the server.ssl properties so your "server" configuration looks like:
-#
+# ?
 # server:
 #   port: 443
 #   ssl:
