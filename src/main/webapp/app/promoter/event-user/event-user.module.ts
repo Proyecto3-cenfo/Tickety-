@@ -5,6 +5,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { VentasComponent } from './ventas/ventas.component';
 import { NgChartsModule } from 'ng2-charts';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 const routes: Routes = [
   { path: 'event-user/list', component: EventUserComponent },
@@ -13,6 +15,6 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [EventUserComponent, VentasComponent],
-  imports: [CommonModule, RouterModule.forChild(routes), MatExpansionModule, NgChartsModule],
+  imports: [CommonModule, RouterModule.forChild(routes), MatExpansionModule, NgChartsModule, MatTableModule, MatPaginatorModule],
 })
 export class EventUserModule {}
